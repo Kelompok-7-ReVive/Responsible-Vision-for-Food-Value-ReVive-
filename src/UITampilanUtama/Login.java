@@ -10,12 +10,13 @@ import java.util.Arrays;
 import Model.UserAccount;
 import Service.AuthService;
 import UITampilanUtama.BerandaUtama;
-import UIKepalaAdministrasi.DashboardKepala;
 import UIKepalaAdministrasi.BerandaKepala;
-//import ui.DashboardPelanggan;
-import java.util.Optional;
-import javax.swing.JOptionPane;
 import UIStaffAdministrasi.BerandaStaff;
+import javax.swing.JOptionPane;
+import java.util.Optional;
+import Model.Kepala;
+import Model.Staf;
+import Model.Pelanggan;
 /**
  *
  * @author Zyrus
@@ -240,11 +241,6 @@ public class Login extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -252,10 +248,9 @@ public class Login extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new Login().setVisible(true));
@@ -279,53 +274,31 @@ public class Login extends javax.swing.JFrame {
 
     private void performLogin() {
         String email = LoginUsername.getText().trim();
-            char[] passChars = LoginPassword.getPassword();
-            String password = new String(passChars);
+        char[] passChars = LoginPassword.getPassword();
+        String password = new String(passChars);
 
-            if (email.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Email dan password tidak boleh kosong.",
-                        "Login Gagal", JOptionPane.WARNING_MESSAGE);
-                Arrays.fill(passChars, '\0');
-                return;
-            }
-
-            Optional<UserAccount> ou = authService.login(email, password);
-
-            if (ou.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Username/Password tidak sesuai",
-                        "Login Gagal", JOptionPane.ERROR_MESSAGE);
-                LoginPassword.setText("");
-                LoginPassword.requestFocusInWindow();
-                Arrays.fill(passChars, '\0');
-                return;
-            }
-
-            UserAccount u = ou.get();
-            String role = u.getRole();
-
-            // Notifikasi sukses + role
-            JOptionPane.showMessageDialog(
-                this,
-                "Login berhasil!\nRole: " + role + "\nNama: " + u.getNama(),
-                "Berhasil",
-                JOptionPane.INFORMATION_MESSAGE
-            );
-
-            // [DIUBAH] Routing sesuai role menggunakan if-else if
-            if ("Kepala_administrasi".equalsIgnoreCase(role)) {
-                new BerandaKepala(u).setVisible(true);
-                dispose();
-            } else if ("Staff_administrasi".equalsIgnoreCase(role)) {
-                new BerandaStaff (u).setVisible(true);
-                dispose();
-                JOptionPane.showMessageDialog(this, "Dashboard Staff belum diaktifkan.");
-            } else if ("Pelanggan".equalsIgnoreCase(role)) {
-                // new DashboardPelanggan(u).setVisible(true); dispose();
-                JOptionPane.showMessageDialog(this, "Dashboard Pelanggan belum diaktifkan.");
-            } else {
-                JOptionPane.showMessageDialog(this, "Role tidak dikenali: " + role);
-            }
-
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Email dan password tidak boleh kosong.",
+                    "Login Gagal", JOptionPane.WARNING_MESSAGE);
             Arrays.fill(passChars, '\0');
+            return;
         }
+
+        Optional<UserAccount> ou = authService.login(email, password);
+
+        if (ou.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Username/Password tidak sesuai",
+                    "Login Gagal", JOptionPane.ERROR_MESSAGE);
+            LoginPassword.setText("");
+            LoginPassword.requestFocusInWindow();
+            Arrays.fill(passChars, '\0');
+            return;
+        }
+
+        UserAccount u = ou.get();
+        
+        u.bukaBeranda(this); 
+
+        Arrays.fill(passChars, '\0');
+    }
 }

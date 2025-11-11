@@ -3,19 +3,22 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Service;
+import DAO.AuthDAO;
 import Model.UserAccount;
-import Repository.UserRepository;
 import java.util.Optional;
 /**
  *
  * @author Zyrus
  */
 public class AuthService {
-        private final UserRepository repo = new UserRepository();
+    // [DIUBAH] Ganti UserRepository menjadi AuthDAO
+    private final AuthDAO dao = new AuthDAO(); 
 
     public Optional<UserAccount> login(String email, String password) {
         if (email == null || email.isBlank()) return Optional.empty();
         if (password == null || password.isBlank()) return Optional.empty();
-        return repo.login(email, password);
+        
+        // [DIUBAH] Panggil metode login dari DAO yang baru
+        return dao.login(email, password); 
     }
 }

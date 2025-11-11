@@ -3,7 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIStaffAdministrasi;
+import Model.Staf; // [BARU] Import kelas konkret Staf
 import Model.UserAccount;
+import UIStaffAdministrasi.BerandaStaff; // Pastikan ini benar
+import UIStaffAdministrasi.TabelProduksi;
+import UIStaffAdministrasi.TabelKonsumsi;
+import UIStaffAdministrasi.TabelBahanBaku;
 /**
  *
  * @author CHRISTIAN
@@ -13,12 +18,13 @@ public class LihatTabel extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LihatTabel.class.getName());
 
     // ==== KONTEKS PENGGUNA ====
-    private final UserAccount penggunaSaatIni;
+    // [DIUBAH] Menggunakan tipe konkret Staf
+    private final Staf penggunaSaatIni;
 
     /**
      * Creates new form Pelanggan_Pilih_Tabel
      */
-    public LihatTabel(UserAccount pengguna) {
+    public LihatTabel(Staf pengguna) {
         if (pengguna == null) {
             throw new IllegalArgumentException("Akun Pengguna tidak boleh kosong (null).");
         }
@@ -30,6 +36,7 @@ public class LihatTabel extends javax.swing.JFrame {
     private void setelahInisialisasi() {
         setLocationRelativeTo(null);
         setTitle("Pilih Tabel Laporan - " + penggunaSaatIni.getNama());
+        // jLabel2 harus diisi dengan nama dan role pengguna yang sebenarnya
         jLabel2.setText(penggunaSaatIni.getNama() + " (Staf Administrasi)");
     }
 
@@ -236,12 +243,12 @@ public class LihatTabel extends javax.swing.JFrame {
     }//GEN-LAST:event_ButtonProduksiActionPerformed
 
     private void ButtonKonsumsiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonKonsumsiActionPerformed
-        //new TabelKonsumsi(this.penggunaSaatIni).setVisible(true);
+        new TabelKonsumsi(this.penggunaSaatIni).setVisible(true);
         dispose();
     }//GEN-LAST:event_ButtonKonsumsiActionPerformed
 
     private void ButtonBahanBakuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonBahanBakuActionPerformed
-        //new TabelBahanBaku(this.penggunaSaatIni).setVisible(true);
+        new TabelBahanBaku(this.penggunaSaatIni).setVisible(true);
         dispose();
     }//GEN-LAST:event_ButtonBahanBakuActionPerformed
 
@@ -257,10 +264,18 @@ public class LihatTabel extends javax.swing.JFrame {
                 }
             }
         } catch (Exception ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LihatTabel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        UserAccount penggunaTes = new UserAccount(2, "Mahesa Adi", "test@mail.com", "pass", "Staff_administrasi", "Balikpapan");
+        // [DIUBAH] Gunakan kelas konkret Staf dan tambahkan idHotel=0
+        Model.Staf penggunaTes = new Model.Staf(
+            2, 
+            "Mahesa Adi", 
+            "test@mail.com", 
+            "pass", 
+            "Balikpapan", // Wilayah
+            10 // idHotel (sesuaikan dengan data Staff Anda)
+        );
         
         java.awt.EventQueue.invokeLater(() -> new LihatTabel(penggunaTes).setVisible(true));
     }

@@ -3,7 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIStaffAdministrasi;
-
+import Model.UserAccount;
+import Service.LayananStaf;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author CHRISTIAN
@@ -11,12 +19,159 @@ package UIStaffAdministrasi;
 public class UpdateSisaPangan extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UpdateSisaPangan.class.getName());
+    
+// ==== KONTEKS PENGGUNA & SERVICE ====
+    private final UserAccount penggunaSaatIni;
+    private final LayananStaf layananStaf = new LayananStaf();
+
+    // ==== MODEL TABEL & FORMATTER ====
+    private DefaultTableModel modelTabel;
+    private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     /**
      * Creates new form Staff_Table
      */
-    public UpdateSisaPangan() {
+    
+    public UpdateSisaPangan(UserAccount pengguna) {
+        if (pengguna == null) {
+            throw new IllegalArgumentException("Akun Pengguna tidak boleh kosong (null).");
+        }
+        this.penggunaSaatIni = pengguna;
         initComponents();
+        setelahInisialisasi();
+    }
+    
+    private void setelahInisialisasi() {
+        setTitle("Update Sisa Pangan - " + penggunaSaatIni.getNama());
+        jLabel2.setText(penggunaSaatIni.getNama() + " (Staf Administrasi)"); 
+
+        // Atur JTable
+        modelTabel = new DefaultTableModel(
+            new Object[][]{},
+            new String[]{
+                "ID Sisa Pangan", "ID Konsumsi", "ID Bahan Baku", "Kategori", 
+                "Total (Kg)", "Tanggal", "Nama Hotel"
+            }
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        TabelSisaPangan.setModel(modelTabel);
+        TabelSisaPangan.getTableHeader().setReorderingAllowed(false);
+        
+        // Muat data untuk pertama kali
+        muatUlangTabel();
+        
+        // Atur Ukuran Jendela & Posisi
+        setSize(1180, 560); // Sesuaikan ukuran ini jika perlu
+        setLocationRelativeTo(null);
+    }
+    
+    /**
+     * Mengambil data dari service dan mengisi tabel.
+     */
+    private void muatUlangTabel() {
+        try {
+            modelTabel.setRowCount(0);
+            List<LayananStaf.BarisSisaPanganUntukTabel> daftarBaris = layananStaf.ambilDataSisaPanganUntukStaf(penggunaSaatIni.getIdUser());
+
+            for (LayananStaf.BarisSisaPanganUntukTabel baris : daftarBaris) {
+                modelTabel.addRow(new Object[]{
+                    baris.idSisaPangan(),
+                    baris.idKonsumsi() == 0 ? "-" : baris.idKonsumsi(),
+                    baris.idBahanBaku() == 0 ? "-" : baris.idBahanBaku(),
+                    baris.kategori(),
+                    baris.totalSisaPangan(),
+                    baris.tanggal(),
+                    baris.namaHotel()
+                });
+            }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Gagal memuat data sisa pangan", ex);
+            JOptionPane.showMessageDialog(this, "Gagal memuat data sisa pangan: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
+     * Mengosongkan semua field input setelah aksi berhasil.
+     */
+    private void kosongkanInputUpdate() {
+        IDSisaPangan.setText(""); // Nama variabel dari initComponents
+        TotalSisaPangan.setText("");
+        TanggalSisaPangan.setText("");
+    }
+    
+    /**
+     * [DIUBAH] Validasi dan logika untuk tombol UPDATE.
+     */
+    private void prosesUpdateData() {
+        try {
+            // 1. Validasi ID Sisa Pangan (Target)
+            String sIdTarget = IDSisaPangan.getText(); // Menggunakan nama variabel dari initComponents
+            if (!isAngkaBulatan(sIdTarget)) {
+                throw new IllegalArgumentException("ID Sisa Pangan yang akan di-update harus diisi dan berupa angka.");
+            }
+            int idSisaPanganTarget = Integer.parseInt(sIdTarget);
+
+            // 2. Validasi Total (Kg)
+            String sTotal = TotalSisaPangan.getText();
+            if (!isAngkaBulatan(sTotal)) {
+                throw new IllegalArgumentException("Total Sisa Pangan baru harus berupa angka (kg).");
+            }
+            int totalKgBaru = Integer.parseInt(sTotal);
+            if (totalKgBaru <= 0) {
+                throw new IllegalArgumentException("Total Sisa Pangan baru harus lebih dari 0 kg.");
+            }
+            
+            // 3. Validasi Tanggal
+            LocalDate tanggalBaru = parseTglAtauGagal(TanggalSisaPangan.getText(), "Tanggal Sisa Pangan baru");
+
+            // 4. Panggil Service
+            // (Kita akan buat metode ini di LayananStaf dan StafDAO)
+            boolean berhasil = layananStaf.updateSisaPangan(
+                penggunaSaatIni.getIdUser(),
+                idSisaPanganTarget,
+                totalKgBaru,
+                tanggalBaru.format(DF)
+            );
+            
+            // 5. Berhasil
+            if (berhasil) {
+                JOptionPane.showMessageDialog(this, "Data sisa pangan (ID: " + idSisaPanganTarget + ") berhasil diupdate.");
+                kosongkanInputUpdate();
+                muatUlangTabel();
+            } else {
+                JOptionPane.showMessageDialog(this, "Update gagal. Pastikan ID Sisa Pangan ada di wilayah Anda.", "Gagal", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (IllegalArgumentException iae) {
+            JOptionPane.showMessageDialog(this, iae.getMessage(), "Input Tidak Valid", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Gagal mengupdate data sisa pangan", ex);
+            JOptionPane.showMessageDialog(this, "Gagal mengupdate data: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // --- Helper validasi ---
+    private static boolean isAngkaBulatan(String teks) {
+        if (teks == null || teks.isBlank()) return false;
+        for (char c : teks.toCharArray()) {
+            if (!Character.isDigit(c)) return false;
+        }
+        return true;
+    }
+
+    private static LocalDate parseTglAtauGagal(String s, String namaField) throws IllegalArgumentException {
+        if (s == null || s.isBlank()) {
+            throw new IllegalArgumentException(namaField + " tidak boleh kosong.");
+        }
+        try {
+            return LocalDate.parse(s.trim(), DF);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException(namaField + " harus berformat yyyy-MM-dd (contoh: 2025-11-03)");
+        }
     }
 
     /**
@@ -31,16 +186,13 @@ public class UpdateSisaPangan extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
-        StaffKategoriSisaPangan = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        StaffTanggalSisaPangan = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        StaffTotalSisaPangan = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         Update = new javax.swing.JButton();
-        StaffIDSisaPangan = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        TotalSisaPangan = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        TanggalSisaPangan = new javax.swing.JTextField();
+        IDSisaPangan = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         TabelSisaPangan = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
@@ -53,7 +205,7 @@ public class UpdateSisaPangan extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(207, 217, 224));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -61,110 +213,90 @@ public class UpdateSisaPangan extends javax.swing.JFrame {
 
         jPanel6.setBackground(new java.awt.Color(19, 52, 30));
 
-        StaffKategoriSisaPangan.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
-        StaffKategoriSisaPangan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ". . .", "Karbohidrat", "Lauk", "Sayur", "Dessert" }));
-        StaffKategoriSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        StaffKategoriSisaPangan.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
         jLabel7.setBackground(new java.awt.Color(255, 255, 255));
         jLabel7.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("Kategori Sisa Pangan");
-
-        StaffTanggalSisaPangan.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
-        StaffTanggalSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-
-        jLabel4.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel4.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Tanggal Sisa Pangan");
-
-        StaffTotalSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        StaffTotalSisaPangan.setMinimumSize(new java.awt.Dimension(64, 25));
-
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Total Sisa Pangan (Kg)");
+        jLabel7.setText("ID Sisa Pangan");
 
         Update.setBackground(new java.awt.Color(78, 113, 68));
         Update.setFont(new java.awt.Font("Poppins", 1, 12)); // NOI18N
         Update.setForeground(new java.awt.Color(255, 255, 255));
         Update.setText("Update");
         Update.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateActionPerformed(evt);
+            }
+        });
 
-        StaffIDSisaPangan.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
-        StaffIDSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel6.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Total Sisa Pangan (Kg)");
+
+        TotalSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        TotalSisaPangan.setMinimumSize(new java.awt.Dimension(64, 25));
+        TotalSisaPangan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TotalSisaPanganActionPerformed(evt);
+            }
+        });
 
         jLabel8.setBackground(new java.awt.Color(255, 255, 255));
         jLabel8.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("ID Sisa Pangan");
+        jLabel8.setText("Tanggal Sisa Pangan");
 
-        jLabel9.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel9.setFont(new java.awt.Font("Poppins", 0, 10)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("*masukkan ID yang ingin di Update");
+        TanggalSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        TanggalSisaPangan.setMinimumSize(new java.awt.Dimension(64, 25));
+        TanggalSisaPangan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TanggalSisaPanganActionPerformed(evt);
+            }
+        });
+
+        IDSisaPangan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IDSisaPanganActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(199, 199, 199)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(StaffKategoriSisaPangan, 0, 333, Short.MAX_VALUE)
-                    .addComponent(StaffTanggalSisaPangan))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(256, 256, 256))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(StaffTotalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(StaffIDSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 301, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
-                        .addComponent(Update, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34))))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TotalSisaPangan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(IDSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(TanggalSisaPangan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Update, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(265, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jLabel7)
-                        .addGap(10, 10, 10))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jLabel9)))
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addComponent(Update, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(17, 17, 17)))
-                        .addGap(0, 0, 0)
-                        .addComponent(StaffTotalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(StaffKategoriSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(StaffIDSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                        .addComponent(jLabel4)
-                        .addGap(2, 2, 2)
-                        .addComponent(StaffTanggalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(24, 24, 24))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(IDSisaPangan)
+                    .addComponent(TanggalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(jLabel6)
+                .addGap(0, 0, 0)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TotalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Update, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38))
         );
 
         jPanel3.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 1050, 180));
@@ -300,9 +432,7 @@ public class UpdateSisaPangan extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1253, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -313,26 +443,39 @@ public class UpdateSisaPangan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ButtonTambahHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonTambahHapusActionPerformed
-
+        new TambahHapusSisaPangan(this.penggunaSaatIni).setVisible(true);
+        dispose();
     }//GEN-LAST:event_ButtonTambahHapusActionPerformed
 
     private void ButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonUpdateActionPerformed
-
+        muatUlangTabel();
     }//GEN-LAST:event_ButtonUpdateActionPerformed
 
     private void ButtonKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonKembaliActionPerformed
-        // TODO add your handling code here:
+        new BerandaStaff(this.penggunaSaatIni).setVisible(true);
+        dispose();
     }//GEN-LAST:event_ButtonKembaliActionPerformed
+
+    private void TotalSisaPanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TotalSisaPanganActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TotalSisaPanganActionPerformed
+
+    private void TanggalSisaPanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TanggalSisaPanganActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TanggalSisaPanganActionPerformed
+
+    private void UpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateActionPerformed
+        prosesUpdateData();
+    }//GEN-LAST:event_UpdateActionPerformed
+
+    private void IDSisaPanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IDSisaPanganActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_IDSisaPanganActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -340,32 +483,37 @@ public class UpdateSisaPangan extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(LihatTabel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new UpdateSisaPangan().setVisible(true));
+        // [DIUBAH] Gunakan kelas konkret Staf dan tambahkan idHotel=0
+        Model.Staf penggunaTes = new Model.Staf(
+            2, 
+            "Mahesa Adi", 
+            "test@mail.com", 
+            "pass", 
+            "Balikpapan", // Wilayah
+            10 // idHotel (sesuaikan dengan data Staff Anda)
+        );
+        
+        java.awt.EventQueue.invokeLater(() -> new LihatTabel(penggunaTes).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonKembali;
     private javax.swing.JButton ButtonTambahHapus;
     private javax.swing.JButton ButtonUpdate;
-    private javax.swing.JTextField StaffIDSisaPangan;
-    private javax.swing.JComboBox<String> StaffKategoriSisaPangan;
-    private javax.swing.JTextField StaffTanggalSisaPangan;
-    private javax.swing.JTextField StaffTotalSisaPangan;
+    private javax.swing.JTextField IDSisaPangan;
     private javax.swing.JTable TabelSisaPangan;
+    private javax.swing.JTextField TanggalSisaPangan;
+    private javax.swing.JTextField TotalSisaPangan;
     private javax.swing.JButton Update;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;

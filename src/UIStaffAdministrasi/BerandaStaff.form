@@ -50,9 +50,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Component id="jPanel1" max="32767" attributes="0"/>
               <Component id="BerandaStaff" alignment="0" max="32767" attributes="0"/>
-              <Component id="TabelStaff" alignment="0" max="32767" attributes="0"/>
+              <Component id="LihatTabel" alignment="0" max="32767" attributes="0"/>
               <Component id="KeluarStaff" alignment="0" max="32767" attributes="0"/>
-              <Component id="TabelStaff1" alignment="0" pref="166" max="32767" attributes="0"/>
+              <Component id="AturSisaPangan" alignment="0" pref="166" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -62,9 +62,9 @@
                   <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
                   <Component id="BerandaStaff" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="TabelStaff" min="-2" max="-2" attributes="0"/>
+                  <Component id="LihatTabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="TabelStaff1" min="-2" max="-2" attributes="0"/>
+                  <Component id="AturSisaPangan" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="KeluarStaff" min="-2" pref="22" max="-2" attributes="0"/>
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -148,7 +148,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BerandaStaffActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="TabelStaff">
+        <Component class="javax.swing.JButton" name="LihatTabel">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="1e" green="41" red="13" type="rgb"/>
@@ -167,7 +167,7 @@
             <Property name="contentAreaFilled" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TabelStaffActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="LihatTabelActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="KeluarStaff">
@@ -192,7 +192,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="KeluarStaffActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="TabelStaff1">
+        <Component class="javax.swing.JButton" name="AturSisaPangan">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="1e" green="41" red="13" type="rgb"/>
@@ -211,7 +211,7 @@
             <Property name="contentAreaFilled" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TabelStaff1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AturSisaPanganActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

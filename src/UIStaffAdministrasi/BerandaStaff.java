@@ -6,11 +6,11 @@ package UIStaffAdministrasi;
 import UIKepalaAdministrasi.*;
 import Model.FilterDashboard;
 import Model.RingkasanKPI;
+import Model.Staf;
 import Model.TotalWilayah;
 import Service.KepalaDashboardService;
 import UITampilanUtama.BerandaUtama;
 import Model.UserAccount;
-import UITampilanUtama.BerandaUtama;
 
 
 
@@ -124,9 +124,9 @@ public class BerandaStaff extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         BerandaStaff = new javax.swing.JButton();
-        TabelStaff = new javax.swing.JButton();
+        LihatTabel = new javax.swing.JButton();
         KeluarStaff = new javax.swing.JButton();
-        TabelStaff1 = new javax.swing.JButton();
+        AturSisaPangan = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -196,16 +196,16 @@ public class BerandaStaff extends javax.swing.JFrame {
             }
         });
 
-        TabelStaff.setBackground(new java.awt.Color(19, 65, 30));
-        TabelStaff.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        TabelStaff.setForeground(new java.awt.Color(255, 255, 255));
-        TabelStaff.setText("Lihat Tabel");
-        TabelStaff.setBorder(null);
-        TabelStaff.setBorderPainted(false);
-        TabelStaff.setContentAreaFilled(false);
-        TabelStaff.addActionListener(new java.awt.event.ActionListener() {
+        LihatTabel.setBackground(new java.awt.Color(19, 65, 30));
+        LihatTabel.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        LihatTabel.setForeground(new java.awt.Color(255, 255, 255));
+        LihatTabel.setText("Lihat Tabel");
+        LihatTabel.setBorder(null);
+        LihatTabel.setBorderPainted(false);
+        LihatTabel.setContentAreaFilled(false);
+        LihatTabel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TabelStaffActionPerformed(evt);
+                LihatTabelActionPerformed(evt);
             }
         });
 
@@ -222,16 +222,16 @@ public class BerandaStaff extends javax.swing.JFrame {
             }
         });
 
-        TabelStaff1.setBackground(new java.awt.Color(19, 65, 30));
-        TabelStaff1.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        TabelStaff1.setForeground(new java.awt.Color(255, 255, 255));
-        TabelStaff1.setText("Atur Sisa Pangan");
-        TabelStaff1.setBorder(null);
-        TabelStaff1.setBorderPainted(false);
-        TabelStaff1.setContentAreaFilled(false);
-        TabelStaff1.addActionListener(new java.awt.event.ActionListener() {
+        AturSisaPangan.setBackground(new java.awt.Color(19, 65, 30));
+        AturSisaPangan.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        AturSisaPangan.setForeground(new java.awt.Color(255, 255, 255));
+        AturSisaPangan.setText("Atur Sisa Pangan");
+        AturSisaPangan.setBorder(null);
+        AturSisaPangan.setBorderPainted(false);
+        AturSisaPangan.setContentAreaFilled(false);
+        AturSisaPangan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TabelStaff1ActionPerformed(evt);
+                AturSisaPanganActionPerformed(evt);
             }
         });
 
@@ -241,9 +241,9 @@ public class BerandaStaff extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(BerandaStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(TabelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(LihatTabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(KeluarStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(TabelStaff1, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+            .addComponent(AturSisaPangan, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,9 +252,9 @@ public class BerandaStaff extends javax.swing.JFrame {
                 .addGap(66, 66, 66)
                 .addComponent(BerandaStaff)
                 .addGap(18, 18, 18)
-                .addComponent(TabelStaff)
+                .addComponent(LihatTabel)
                 .addGap(18, 18, 18)
-                .addComponent(TabelStaff1)
+                .addComponent(AturSisaPangan)
                 .addGap(18, 18, 18)
                 .addComponent(KeluarStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -540,21 +540,24 @@ public class BerandaStaff extends javax.swing.JFrame {
         refreshDashboard();
     }//GEN-LAST:event_KFilterBulanActionPerformed
 
-    private void TabelStaffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TabelStaffActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TabelStaffActionPerformed
+    private void LihatTabelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LihatTabelActionPerformed
+        new LihatTabel((Staf) this.currentUser).setVisible(true);
+        dispose();
+    }//GEN-LAST:event_LihatTabelActionPerformed
 
     private void BerandaStaffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BerandaStaffActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_BerandaStaffActionPerformed
 
     private void KeluarStaffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KeluarStaffActionPerformed
-        // TODO add your handling code here:
+        new BerandaUtama().setVisible(true);
+        dispose();
     }//GEN-LAST:event_KeluarStaffActionPerformed
 
-    private void TabelStaff1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TabelStaff1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TabelStaff1ActionPerformed
+    private void AturSisaPanganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AturSisaPanganActionPerformed
+        new TambahHapusSisaPangan(this.currentUser).setVisible(true);
+        dispose();
+    }//GEN-LAST:event_AturSisaPanganActionPerformed
 
     
     private void refreshDashboard() {
@@ -625,12 +628,12 @@ public class BerandaStaff extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AturSisaPangan;
     private javax.swing.JButton BerandaStaff;
     private javax.swing.JComboBox<String> KFilterBulan;
     private javax.swing.JComboBox<String> KFilterWilayah;
     private javax.swing.JButton KeluarStaff;
-    private javax.swing.JButton TabelStaff;
-    private javax.swing.JButton TabelStaff1;
+    private javax.swing.JButton LihatTabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

@@ -3,7 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIPelanggan;
-
+import Model.Pelanggan;
+import UITampilanUtama.BerandaUtama;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.logging.Level;
 /**
  *
  * @author CHRISTIAN
@@ -11,12 +17,69 @@ package UIPelanggan;
 public class PelangganBuktiPembayaran extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PelangganBuktiPembayaran.class.getName());
+    
+    private final Pelanggan currentUser;
+    private final int idTransaksi;
+    private File fileBuktiPembayaran;
 
     /**
      * Creates new form Pelanggan_BuktiPembayaran
      */
-    public PelangganBuktiPembayaran() {
+    public PelangganBuktiPembayaran(Pelanggan user, int idTransaksi) {
+        if (user == null) {
+            JOptionPane.showMessageDialog(null, "Error: Akun Pelanggan tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
+        this.currentUser = user;
+        this.idTransaksi = idTransaksi;
         initComponents();
+        afterInit();
+    }
+    
+    private void afterInit() {
+        setLocationRelativeTo(null);
+        // [BARU] Menampilkan ID Transaksi di judul
+        setTitle("Upload Bukti Bayar - Transaksi #" + idTransaksi); 
+        jLabel1.setText("BUKTI PEMBAYARAN (TRANSAKSI #" + idTransaksi + ")");
+        
+        // Nonaktifkan Submit/Upload button di awal
+        SubmitButton.setEnabled(false);
+    }
+    
+    private void prosesPilihFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        // Hanya izinkan file gambar
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Gambar (JPG, PNG)", "jpg", "jpeg", "png");
+        fileChooser.setFileFilter(filter);
+        
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            fileBuktiPembayaran = fileChooser.getSelectedFile();
+            // [PERBAIKAN] Tampilkan nama file
+            FileJPG.setText(fileBuktiPembayaran.getName());
+            SubmitButton.setEnabled(true);
+        }
+    }
+    
+    private void prosesUpload() {
+        if (fileBuktiPembayaran == null) {
+            JOptionPane.showMessageDialog(this, "Silakan pilih file bukti pembayaran terlebih dahulu.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // --- Logika Asumsi Upload Sukses ---
+        // Di sini seharusnya ada kode untuk memproses file atau mengirimnya ke server/database
+        // Untuk tujuan PBO, kita simulasikan sukses
+        logger.log(Level.INFO, "Bukti bayar untuk Transaksi #{0} berhasil diupload dari: {1}", 
+                new Object[]{idTransaksi, fileBuktiPembayaran.getAbsolutePath()});
+        
+        JOptionPane.showMessageDialog(this, 
+                "Upload Bukti Pembayaran Sukses!\nStatus transaksi Anda akan segera diperbarui. ID Transaksi: #" + idTransaksi, 
+                "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+        // Kembali ke halaman Belanja
+        new PelangganBelanja(this.currentUser).setVisible(true);
+        dispose();
     }
 
     /**
@@ -33,15 +96,20 @@ public class PelangganBuktiPembayaran extends javax.swing.JFrame {
         FileJPG = new javax.swing.JTextField();
         SubmitButton = new javax.swing.JButton();
         SelectFile = new javax.swing.JButton();
-        Pembatass = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(207, 217, 224));
+        jPanel1.setBackground(new java.awt.Color(19, 52, 30));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         FileJPG.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
         FileJPG.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED, null, null, null, java.awt.Color.darkGray));
+        FileJPG.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FileJPGActionPerformed(evt);
+            }
+        });
         jPanel1.add(FileJPG, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 150, 230, 30));
 
         SubmitButton.setBackground(new java.awt.Color(78, 113, 68));
@@ -49,16 +117,28 @@ public class PelangganBuktiPembayaran extends javax.swing.JFrame {
         SubmitButton.setForeground(new java.awt.Color(255, 255, 255));
         SubmitButton.setText("Submit");
         SubmitButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, java.awt.Color.black, java.awt.Color.darkGray));
-        jPanel1.add(SubmitButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 280, 110, 30));
+        SubmitButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SubmitButtonActionPerformed(evt);
+            }
+        });
+        jPanel1.add(SubmitButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 220, 110, 30));
 
         SelectFile.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
         SelectFile.setText("Select File");
         SelectFile.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, null, null, java.awt.Color.black, java.awt.Color.darkGray));
+        SelectFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SelectFileActionPerformed(evt);
+            }
+        });
         jPanel1.add(SelectFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 150, 110, 30));
 
-        Pembatass.setForeground(new java.awt.Color(207, 217, 224));
-        Pembatass.setText("Pembatas");
-        jPanel1.add(Pembatass, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 340, -1, -1));
+        jLabel1.setFont(new java.awt.Font("Montserrat", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("BUKTI PEMBAYRAN (UPLOAD DISINI)");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 590, 20));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -74,15 +154,22 @@ public class PelangganBuktiPembayaran extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void FileJPGActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FileJPGActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FileJPGActionPerformed
+
+    private void SelectFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectFileActionPerformed
+        prosesPilihFile();
+    }//GEN-LAST:event_SelectFileActionPerformed
+
+    private void SubmitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubmitButtonActionPerformed
+        prosesUpload();
+    }//GEN-LAST:event_SubmitButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -90,21 +177,22 @@ public class PelangganBuktiPembayaran extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new PelangganBuktiPembayaran().setVisible(true));
+        // [TESTING] Objek Pelanggan palsu dan ID Transaksi palsu
+        Pelanggan testUser = new Pelanggan(1, "Eko Wijaya", "ekowijayacool@gmail.com", "ekopintar11", "PT Nusantara Globalindo");
+        
+        java.awt.EventQueue.invokeLater(() -> new PelangganBuktiPembayaran(testUser, 101).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField FileJPG;
-    private javax.swing.JLabel Pembatass;
     private javax.swing.JFileChooser PilihFile;
     private javax.swing.JButton SelectFile;
     private javax.swing.JButton SubmitButton;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

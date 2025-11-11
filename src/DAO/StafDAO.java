@@ -9,16 +9,15 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types; // Pastikan import ini ada
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Types;
 /**
  *
  * @author Zyrus
  */
-public class StaffDAO {
+public class StafDAO implements IStafDAO {
 
-// DTO untuk data Produksi
     public record BarisProduksi(
         int idProduksi,
         int idHotel,
@@ -27,16 +26,14 @@ public class StaffDAO {
         Date tanggalProduksi
     ) {}
 
-    // DTO untuk data Konsumsi
     public record BarisKonsumsi(
         int idKonsumsi,
         int idProduksi,
         int totalTermakan,
         String kategori,
-        Date tanggalKonsumsi // Diambil dari tanggal produksi terkait
+        Date tanggalKonsumsi
     ) {}
     
-    // DTO untuk data Bahan Baku
     public record BarisBahanBaku(
         int idBahanBaku,
         String nama,
@@ -47,9 +44,6 @@ public class StaffDAO {
         String kategoriKadaluwarsa
     ) {}
     
-    /**
-     * [BARU] DTO untuk data Sisa Pangan, termasuk nama hotel.
-     */
     public record BarisSisaPangan(
         int idSisaPangan,
         int idKonsumsi,
@@ -60,24 +54,16 @@ public class StaffDAO {
         String namaHotel
     ) {}
     
-    /**
-     * [BARU] DTO sederhana untuk mengisi dropdown ID Sumber.
-     */
     public record PilihanID(
         int id,
-        String deskripsi, // Misal: "Nasi Goreng"
-        String kategori   // Misal: "Karbohidrat"
+        String deskripsi,
+        String kategori
     ) {}
 
 
-    // =================================================================
-    // ================== METODE UNTUK MENGAMBIL DATA ==================
-    // =================================================================
-
-    /**
-     * Mengambil wilayah yang dikelola oleh seorang Staf berdasarkan id_user.
-     */
-    public String ambilWilayahStaf(int idPenggunaStaf) throws SQLException {
+    // (Metode Anda: ambilWilayahStaf, ambilProduksiBerdasarkanWilayah, ambilKonsumsiBerdasarkanWilayah, ambilSemuaBahanBaku)
+    // ... (kode metode Anda yang sudah ada di sini) ...
+     public String ambilWilayahStaf(int idPenggunaStaf) throws SQLException {
         String sql = "SELECT wilayah_dikelola FROM staff_administrasi WHERE id_user = ?";
         try (Connection koneksi = DBConnection.getConnection();
              PreparedStatement ps = koneksi.prepareStatement(sql)) {
@@ -93,9 +79,6 @@ public class StaffDAO {
         }
     }
 
-    /**
-     * Mengambil semua data produksi dari hotel-hotel yang berada di wilayah tertentu.
-     */
     public List<BarisProduksi> ambilProduksiBerdasarkanWilayah(String wilayah) throws SQLException {
         String sql = "SELECT p.id_produksi, p.id_hotel, p.kategori_produksi, p.total_produksi, p.tanggal_produksi " +
                      "FROM produksi p JOIN hotel h ON p.id_hotel = h.id_hotel " +
@@ -120,9 +103,6 @@ public class StaffDAO {
         return hasil;
     }
 
-    /**
-     * Mengambil semua data konsumsi dari hotel-hotel yang berada di wilayah tertentu.
-     */
     public List<BarisKonsumsi> ambilKonsumsiBerdasarkanWilayah(String wilayah) throws SQLException {
         String sql = "SELECT k.id_konsumsi, k.id_produksi, k.total_termakan, k.kategori_konsumsi, p.tanggal_produksi AS tanggal_konsumsi " +
                      "FROM konsumsi k " +
@@ -149,9 +129,6 @@ public class StaffDAO {
         return hasil;
     }
 
-    /**
-     * Mengambil semua data bahan baku (7 kolom).
-     */
     public List<BarisBahanBaku> ambilSemuaBahanBaku() throws SQLException {
         String sql = "SELECT id_bahan_baku, nama_bahan_baku, jenis_bahan_baku, " +
                      "jumlah_bahan_baku, tanggal_kadaluwarsa, " + 
@@ -177,17 +154,11 @@ public class StaffDAO {
         }
         return hasil;
     }
+
+    // (Metode Sisa Pangan Anda: ambilSisaPanganBerdasarkanWilayah, ambilKonsumsiAktif, ambilBahanBakuAktif, tambahSisaPangan, hapusSisaPangan)
+    // ... (kode metode sisa pangan Anda yang sudah ada di sini) ...
     
-    // =================================================================
-    // ============= [BARU] METODE UNTUK SISA PANGAN ===================
-    // =================================================================
-    
-    /**
-     * [BARU] Mengambil data sisa pangan yang diinput oleh staf di wilayah tertentu.
-     */
     public List<BarisSisaPangan> ambilSisaPanganBerdasarkanWilayah(String wilayah) throws SQLException {
-        // Kita JOIN ke user -> staff_administrasi untuk memfilter berdasarkan wilayah
-        // Kita juga LEFT JOIN ke konsumsi -> produksi -> hotel untuk mendapatkan nama hotel
         String sql = """
             SELECT 
                 s.id_sisa_pangan, s.id_konsumsi, s.id_bahan_baku, s.kategori_sisa_pangan,
@@ -224,9 +195,6 @@ public class StaffDAO {
         return hasil;
     }
     
-    /**
-     * [BARU] Mengambil daftar konsumsi yang valid di wilayah staf untuk dropdown.
-     */
     public List<PilihanID> ambilKonsumsiAktif(String wilayah) throws SQLException {
         String sql = """
             SELECT k.id_konsumsi, k.kategori_konsumsi 
@@ -244,7 +212,7 @@ public class StaffDAO {
                 while (rs.next()) {
                     hasil.add(new PilihanID(
                         rs.getInt("id_konsumsi"),
-                        "", // Deskripsi bisa ditambahkan jika ada, misal nama makanan
+                        "", 
                         rs.getString("kategori_konsumsi")
                     ));
                 }
@@ -253,9 +221,6 @@ public class StaffDAO {
         return hasil;
     }
     
-    /**
-     * [BARU] Mengambil daftar bahan baku yang valid untuk dropdown.
-     */
     public List<PilihanID> ambilBahanBakuAktif() throws SQLException {
         String sql = "SELECT id_bahan_baku, nama_bahan_baku, jenis_bahan_baku FROM bahan_baku WHERE jumlah_bahan_baku > 0 ORDER BY nama_bahan_baku";
         List<PilihanID> hasil = new ArrayList<>();
@@ -274,9 +239,6 @@ public class StaffDAO {
         return hasil;
     }
 
-    /**
-     * [BARU] Menyimpan data sisa pangan baru ke database.
-     */
     public void tambahSisaPangan(int idPenggunaStaf, int idSumber, String tipeSumber, 
                                 String kategori, int totalKg, String tanggalYmd) throws SQLException {
         
@@ -306,9 +268,6 @@ public class StaffDAO {
         }
     }
 
-    /**
-     * [BARU] Menghapus data sisa pangan. Hanya bisa menghapus data yang diinput oleh staf di wilayah yang sama.
-     */
     public boolean hapusSisaPangan(int idSisaPangan, String wilayahStaf) throws SQLException {
         String sql = """
             DELETE s FROM sisa_pangan s
@@ -323,7 +282,45 @@ public class StaffDAO {
             ps.setString(2, wilayahStaf);
             
             int affectedRows = ps.executeUpdate();
-            return affectedRows > 0; // Mengembalikan true jika 1 baris terhapus
+            return affectedRows > 0;
+        }
+    }
+
+    /**
+     * [DIUBAH] Mengupdate data sisa pangan (hanya total dan tanggal).
+     * Sumber data (id_konsumsi, id_bahan_baku, kategori) tidak diubah.
+     */
+    public boolean updateSisaPangan(
+            int idSisaPanganTarget, int totalKgBaru, String tanggalYmdBaru,
+            String wilayahStaf) throws SQLException {
+
+        // Kueri UPDATE ini melakukan JOIN dengan staff_administrasi
+        // untuk memvalidasi wilayah sebelum mengupdate.
+        String sql = """
+            UPDATE sisa_pangan s
+            JOIN staff_administrasi sa ON s.id_user = sa.id_user
+            SET
+                s.total_sisa_pangan = ?,
+                s.tanggal_sisa_pangan = ?
+            WHERE
+                s.id_sisa_pangan = ? AND sa.wilayah_dikelola = ?
+            """;
+        
+        try (Connection koneksi = DBConnection.getConnection();
+             PreparedStatement ps = koneksi.prepareStatement(sql)) {
+
+            // === Bagian SET ===
+            ps.setInt(1, totalKgBaru);
+            ps.setDate(2, Date.valueOf(tanggalYmdBaru));
+            
+            // === Bagian WHERE (Keamanan) ===
+            ps.setInt(3, idSisaPanganTarget);
+            ps.setString(4, wilayahStaf);
+
+            int affectedRows = ps.executeUpdate();
+            
+            // Mengembalikan true jika 1 baris berhasil diupdate
+            return affectedRows > 0;
         }
     }
 }

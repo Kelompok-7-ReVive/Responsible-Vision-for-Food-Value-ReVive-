@@ -3,9 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIKepalaAdministrasi;
-
 import UIKepalaAdministrasi.LihatTransaksi;
-import Model.UserAccount;
+import Model.Kepala; // [BARU] Import kelas Kepala
+import Model.UserAccount; // Tetap perlu jika ada method yang memanggil UserAccount
+import UITampilanUtama.BerandaUtama; // Perlu untuk tombol keluar
+import UIKepalaAdministrasi.TambahHapusProduk; // Perlu untuk tombol Tambah/Hapus Produk
 
 /**
  *
@@ -14,21 +16,20 @@ import Model.UserAccount;
 public class PenjualanKepala extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PenjualanKepala.class.getName());
-    private final UserAccount currentUser;
+    private final Kepala currentUser;
 
     /**
      * Creates new form KepalaAdministrasi
      */
-    public PenjualanKepala(UserAccount user) {
+    public PenjualanKepala(Kepala user) {
         initComponents();
         
         if (user == null) {
             throw new IllegalArgumentException("User Account tidak boleh null saat membuka halaman Penjualan.");
         }
         this.currentUser = user;
-        initComponents();
-        setLocationRelativeTo(null); // Atur posisi setelah init
-        setTitle("Penjualan - " + currentUser.getNama()); // Personalisasi judul
+        setLocationRelativeTo(null);
+        setTitle("Penjualan - " + currentUser.getNama());
     }
 
     /**
@@ -45,10 +46,10 @@ public class PenjualanKepala extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        Beranda = new javax.swing.JButton();
+        Dashboard = new javax.swing.JButton();
+        Penjualan = new javax.swing.JButton();
+        Keluar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         LihatTransaksi = new javax.swing.JButton();
@@ -102,55 +103,55 @@ public class PenjualanKepala extends javax.swing.JFrame {
                 .addGap(37, 37, 37))
         );
 
-        jButton1.setBackground(new java.awt.Color(19, 65, 30));
-        jButton1.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Beranda");
-        jButton1.setBorder(null);
-        jButton1.setBorderPainted(false);
-        jButton1.setContentAreaFilled(false);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        Beranda.setBackground(new java.awt.Color(19, 65, 30));
+        Beranda.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        Beranda.setForeground(new java.awt.Color(255, 255, 255));
+        Beranda.setText("Beranda");
+        Beranda.setBorder(null);
+        Beranda.setBorderPainted(false);
+        Beranda.setContentAreaFilled(false);
+        Beranda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                BerandaActionPerformed(evt);
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(19, 65, 30));
-        jButton2.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Dashboard");
-        jButton2.setBorder(null);
-        jButton2.setBorderPainted(false);
-        jButton2.setContentAreaFilled(false);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        Dashboard.setBackground(new java.awt.Color(19, 65, 30));
+        Dashboard.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        Dashboard.setForeground(new java.awt.Color(255, 255, 255));
+        Dashboard.setText("Dashboard");
+        Dashboard.setBorder(null);
+        Dashboard.setBorderPainted(false);
+        Dashboard.setContentAreaFilled(false);
+        Dashboard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                DashboardActionPerformed(evt);
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(19, 65, 30));
-        jButton3.setFont(new java.awt.Font("Poppins", 1, 14)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Penjualan");
-        jButton3.setBorder(null);
-        jButton3.setBorderPainted(false);
-        jButton3.setContentAreaFilled(false);
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        Penjualan.setBackground(new java.awt.Color(19, 65, 30));
+        Penjualan.setFont(new java.awt.Font("Poppins", 1, 14)); // NOI18N
+        Penjualan.setForeground(new java.awt.Color(255, 255, 255));
+        Penjualan.setText("Penjualan");
+        Penjualan.setBorder(null);
+        Penjualan.setBorderPainted(false);
+        Penjualan.setContentAreaFilled(false);
+        Penjualan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                PenjualanActionPerformed(evt);
             }
         });
 
-        jButton4.setBackground(new java.awt.Color(19, 65, 30));
-        jButton4.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Keluar");
-        jButton4.setBorder(null);
-        jButton4.setBorderPainted(false);
-        jButton4.setContentAreaFilled(false);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        Keluar.setBackground(new java.awt.Color(19, 65, 30));
+        Keluar.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        Keluar.setForeground(new java.awt.Color(255, 255, 255));
+        Keluar.setText("Keluar");
+        Keluar.setBorder(null);
+        Keluar.setBorderPainted(false);
+        Keluar.setContentAreaFilled(false);
+        Keluar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                KeluarActionPerformed(evt);
             }
         });
 
@@ -162,10 +163,10 @@ public class PenjualanKepala extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(38, 38, 38)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Penjualan, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Keluar, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Beranda, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Dashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
@@ -173,13 +174,13 @@ public class PenjualanKepala extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(42, 42, 42)
-                .addComponent(jButton1)
+                .addComponent(Beranda)
                 .addGap(30, 30, 30)
-                .addComponent(jButton2)
+                .addComponent(Dashboard)
                 .addGap(29, 29, 29)
-                .addComponent(jButton3)
+                .addComponent(Penjualan)
                 .addGap(33, 33, 33)
-                .addComponent(jButton4)
+                .addComponent(Keluar)
                 .addGap(0, 65, Short.MAX_VALUE))
         );
 
@@ -288,21 +289,24 @@ public class PenjualanKepala extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void BerandaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BerandaActionPerformed
+        new BerandaUtama().setVisible(true);
+        dispose();
+    }//GEN-LAST:event_BerandaActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void DashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DashboardActionPerformed
+        new DashboardKepala(this.currentUser).setVisible(true); 
+        dispose();
+    }//GEN-LAST:event_DashboardActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void PenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PenjualanActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_PenjualanActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    private void KeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KeluarActionPerformed
+        new BerandaUtama().setVisible(true);
+        dispose();
+    }//GEN-LAST:event_KeluarActionPerformed
 
     private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
         // TODO add your handling code here:
@@ -324,31 +328,37 @@ public class PenjualanKepala extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
+                for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                    if ("Nimbus".equals(info.getName())) {
+                        javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                        break;
+                    }
                 }
+            } catch (Exception ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
             }
-        } catch (Exception ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+
+            // [PERBAIKAN] Gunakan kelas konkret Kepala yang benar
+            Model.Kepala testUser = new Model.Kepala(
+                3, // ID User
+                "Narendra Augusta",
+                "test@mail.com",
+                "pass",
+                "Kutai Kartanegara", // Wilayah
+                0 // ID HOTEL (Argumen ini sekarang tidak diperlukan karena kita hapus dari constructor Kepala)
+            );
+
+            // Panggil constructor yang benar dengan user palsu
+            java.awt.EventQueue.invokeLater(() -> new PenjualanKepala(testUser).setVisible(true));
         }
 
-        // Buat user palsu untuk tujuan testing
-        UserAccount testUser = new UserAccount(
-            3, "Narendra Augusta", "test@mail.com", "pass", "Kepala_administrasi", "Kutai Kartanegara"
-        );
-        
-        java.awt.EventQueue.invokeLater(() -> new PenjualanKepala(testUser).setVisible(true));
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Beranda;
     private javax.swing.JButton BuatTambahHapus;
+    private javax.swing.JButton Dashboard;
+    private javax.swing.JButton Keluar;
     private javax.swing.JButton LihatTransaksi;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton Penjualan;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

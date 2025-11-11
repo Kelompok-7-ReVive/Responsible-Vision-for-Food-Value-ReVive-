@@ -16,24 +16,30 @@ public class RegisterService {
     private static final int MAX_LEN = 50;
     
     public void registerPelanggan(String nama, String mitra, String email, String password) throws Exception {
-        // 1) Validasi basic
+        email = email.toLowerCase();
+        // 1) Validasi basic (range, format)
         validateField("Nama", nama);
         validateField("Mitra", mitra);
         validateEmail(email);
         validatePassword(password);
 
+        // [PERBAIKAN KRITIS] Pengecekan email unik dilakukan di koneksi terpisah, sebelum transaksi dimulai.
         try (Connection conn = DBConnection.getConnection()) {
-            if (conn == null) {
-                throw new SQLException("Koneksi database null.");
+            if (conn == null) throw new SQLException("Koneksi database null.");
+            
+            // Cek email unik di tabel user
+            if (emailExists(conn, email)) {
+                // Jika email sudah ada, throw exception validasi yang akan ditangkap di UI.
+                throw new IllegalArgumentException("Email sudah terdaftar. Gunakan email lain.");
             }
+        } // Koneksi ditutup di sini
+
+        // 2) Transaksi INSERT dimulai (HANYA JIKA validasi unik sukses)
+        try (Connection conn = DBConnection.getConnection()) {
+            if (conn == null) throw new SQLException("Koneksi database null.");
             conn.setAutoCommit(false);
 
             try {
-                // 2) Cek email unik di tabel user
-                if (emailExists(conn, email)) {
-                    throw new IllegalArgumentException("Email sudah terdaftar. Gunakan email lain.");
-                }
-
                 // 3) Insert ke user (role fixed Pelanggan, id_hotel NULL)
                 int idUser = insertUser(conn, nama, email, password);
 
@@ -43,7 +49,8 @@ public class RegisterService {
                 conn.commit();
             } catch (Exception e) {
                 conn.rollback();
-                throw e;
+                // Jika terjadi error SQL di sini, exception akan dilempar
+                throw e; 
             } finally {
                 conn.setAutoCommit(true);
             }
@@ -60,7 +67,6 @@ public class RegisterService {
 
     private void validateEmail(String email) {
         validateField("Email", email);
-        // regex sederhana
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,}$")) {
             throw new IllegalArgumentException("Format email tidak valid");
         }
@@ -68,11 +74,11 @@ public class RegisterService {
 
     private void validatePassword(String password) {
         validateField("Password", password);
-        // bisa tambah aturan lain kalau mau (angka, huruf besar, dll)
     }
 
     private boolean emailExists(Connection conn, String email) throws SQLException {
-        String sql = "SELECT 1 FROM user WHERE email = ? LIMIT 1";
+        // [PERBAIKAN] Menggunakan BINARY untuk memastikan pengecekan case-sensitive
+        String sql = "SELECT 1 FROM user WHERE BINARY email = ? LIMIT 1"; 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email.trim());
             try (ResultSet rs = ps.executeQuery()) {
@@ -86,7 +92,7 @@ public class RegisterService {
         try (PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, nama.trim());
             ps.setString(2, email.trim());
-            ps.setString(3, password); // NOTE: plain text; nanti bisa di-hash
+            ps.setString(3, password); 
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) return rs.getInt(1);

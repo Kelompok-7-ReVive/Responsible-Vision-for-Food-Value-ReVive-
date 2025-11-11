@@ -10,6 +10,7 @@ import Service.KepalaDashboardService;
 import Service.KepalaDashboardService.SeriesTrend;
 import Model.FilterDashboard;
 import Model.DataTrend;
+import Model.Kepala;
 import java.awt.*;
 import java.time.YearMonth;
 import java.util.*;
@@ -38,15 +39,17 @@ public class DashboardKepala extends javax.swing.JFrame {
      * Creates new form KepalaAdministrasi
      */
     public DashboardKepala() {
+        
         java.util.logging.Logger daoLog =
             java.util.logging.Logger.getLogger(DAO.KepalaDashboardDAO.class.getName());
-        daoLog.setUseParentHandlers(false);       // jangan ikut root handler
+        
+        daoLog.setUseParentHandlers(false);       
         daoLog.setLevel(java.util.logging.Level.INFO);
-
+        
         java.util.logging.ConsoleHandler ch = new java.util.logging.ConsoleHandler();
         ch.setLevel(java.util.logging.Level.FINE);
-        ch.setFormatter(new java.util.logging.SimpleFormatter()); // optional
-        // hindari duplikasi handler kalau constructor dipanggil berkali-kali
+        ch.setFormatter(new java.util.logging.SimpleFormatter()); 
+
         if (daoLog.getHandlers().length == 0) {
             daoLog.addHandler(ch);
         }
@@ -56,18 +59,14 @@ public class DashboardKepala extends javax.swing.JFrame {
         
         setLocationRelativeTo(null);
         
-        // Panel chart di jPanel6
         jPanel6.setLayout(new java.awt.BorderLayout());
         chartPanel = new LineChartPanel();
         jPanel6.add(chartPanel, java.awt.BorderLayout.CENTER);
 
-        // Normalisasi default filter (tanpa memicu refresh berkali-kali)
-        setComboSilently(TabelFilter, 0);   // Produksi
-        setComboSilently(WilayahFilter, 0); // Lihat Semua
-        setComboSilently(BulanFilter, 0);   // Lihat Semua (Jan–Des)
+        setComboSilently(TabelFilter, 0);   
+        setComboSilently(WilayahFilter, 0);
+        setComboSilently(BulanFilter, 0);
         
-
-        // Muat awal
         refreshChart();
         
         
@@ -121,9 +120,6 @@ public class DashboardKepala extends javax.swing.JFrame {
         this.currentUser = u;
         setTitle("Dashboard Kepala - " + u.getNama());
         
-        JOptionPane.showMessageDialog(this,
-                "Selamat Datang, " + u.getNama() + "!\nRole: " + u.getRole(),
-                "Login Berhasil", JOptionPane.INFORMATION_MESSAGE);
     }
     
 
@@ -655,7 +651,7 @@ public class DashboardKepala extends javax.swing.JFrame {
 
     private void PenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PenjualanActionPerformed
         // Panggil constructor baru sambil mengirim user yang sedang login
-        new PenjualanKepala(this.currentUser).setVisible(true);
+        new PenjualanKepala((Kepala) this.currentUser).setVisible(true);
 
         // Tutup jendela Beranda
         dispose();
