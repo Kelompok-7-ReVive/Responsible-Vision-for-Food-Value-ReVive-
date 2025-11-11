@@ -4,6 +4,7 @@
  */
 package UIKepalaAdministrasi;
 import Model.FilterDashboard;
+import Model.Kepala;
 import Model.RingkasanKPI;
 import Model.TotalWilayah;
 import Service.KepalaDashboardService;
@@ -53,7 +54,7 @@ public class BerandaKepala extends javax.swing.JFrame {
 
         jPanel5.setLayout(new java.awt.BorderLayout());
         jPanel5.removeAll();
-        jPanel5.add(top5Chart, java.awt.BorderLayout.CENTER); // <— TAMBAHKAN INI
+        jPanel5.add(top5Chart, java.awt.BorderLayout.CENTER);
         jPanel5.setPreferredSize(new java.awt.Dimension(600, 280));
         jPanel5.setBorder(javax.swing.BorderFactory.createCompoundBorder(
             javax.swing.BorderFactory.createLineBorder(new java.awt.Color(200,200,200)),
@@ -568,7 +569,7 @@ public class BerandaKepala extends javax.swing.JFrame {
 
     private void PenjualanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PenjualanActionPerformed
     // Panggil constructor baru sambil mengirim user yang sedang login
-    new PenjualanKepala(this.currentUser).setVisible(true);
+    new PenjualanKepala((Kepala) this.currentUser).setVisible(true);
     
     // Tutup jendela Beranda
     dispose();

@@ -4,7 +4,7 @@
  */
 package UIStaffAdministrasi;
 import Model.UserAccount;
-import Service.LayananStaff; // Kita akan tambahkan metode baru ke service ini
+import Service.LayananStaf; // Kita akan tambahkan metode baru ke service ini
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -23,7 +23,7 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
     
     // ==== KONTEKS PENGGUNA & SERVICE ====
     private final UserAccount penggunaSaatIni;
-    private final LayananStaff layananStaf = new LayananStaff();
+    private final LayananStaf layananStaf = new LayananStaf();
 
     // ==== MODEL TABEL & FORMATTER ====
     private DefaultTableModel modelTabel;
@@ -113,9 +113,9 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
     private void muatUlangTabel() {
         try {
             modelTabel.setRowCount(0); // Kosongkan tabel
-            List<LayananStaff.BarisSisaPanganUntukTabel> daftarBaris = layananStaf.ambilDataSisaPanganUntukStaf(penggunaSaatIni.getIdUser());
+            List<LayananStaf.BarisSisaPanganUntukTabel> daftarBaris = layananStaf.ambilDataSisaPanganUntukStaf(penggunaSaatIni.getIdUser());
 
-            for (LayananStaff.BarisSisaPanganUntukTabel baris : daftarBaris) {
+            for (LayananStaf.BarisSisaPanganUntukTabel baris : daftarBaris) {
                 modelTabel.addRow(new Object[]{
                     baris.idSisaPangan(),
                     baris.idKonsumsi() == 0 ? "-" : baris.idKonsumsi(),
@@ -333,7 +333,7 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(19, 52, 30));
 
         DropdownIDSumber.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
-        DropdownIDSumber.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        DropdownIDSumber.setBorder(null);
         DropdownIDSumber.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         DropdownIDSumber.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -351,7 +351,8 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Pilih yang Ingin Ditambahkan");
 
-        TotalSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        TotalSisaPangan.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+        TotalSisaPangan.setBorder(null);
         TotalSisaPangan.setMinimumSize(new java.awt.Dimension(64, 25));
         TotalSisaPangan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -369,6 +370,7 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
         ButtonTambahProduk.setForeground(new java.awt.Color(255, 255, 255));
         ButtonTambahProduk.setText("Tambah");
         ButtonTambahProduk.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        ButtonTambahProduk.setBorderPainted(false);
         ButtonTambahProduk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ButtonTambahProdukActionPerformed(evt);
@@ -380,7 +382,8 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
         jLabel8.setText("Tanggal Sisa Pangan");
 
-        TanggalSisaPangan.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        TanggalSisaPangan.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+        TanggalSisaPangan.setBorder(null);
         TanggalSisaPangan.setMinimumSize(new java.awt.Dimension(64, 25));
         TanggalSisaPangan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -390,7 +393,7 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
 
         DropdownTipeSumber.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
         DropdownTipeSumber.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "...", "Konsumsi", "Bahan Baku" }));
-        DropdownTipeSumber.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        DropdownTipeSumber.setBorder(null);
         DropdownTipeSumber.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         DropdownTipeSumber.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -409,58 +412,62 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(DropdownIDSumber, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE))
-                        .addGap(2, 2, 2))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TotalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(12, 12, 12)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TanggalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(DropdownTipeSumber, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(13, 13, 13)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(DropdownTipeSumber, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(106, 106, 106))
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(TotalSisaPangan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(TanggalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(2, 2, 2)))))
                         .addGap(18, 18, 18)
-                        .addComponent(ButtonTambahProduk, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(ButtonTambahProduk, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(63, 63, 63)
+                .addComponent(ButtonTambahProduk, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(75, Short.MAX_VALUE))
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(1, 1, 1)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(DropdownIDSumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(DropdownTipeSumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(1, 1, 1)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(DropdownIDSumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(DropdownTipeSumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(0, 0, 0)
-                                .addComponent(TotalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addGap(0, 0, 0)
-                                .addComponent(TanggalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jLabel6)
+                        .addGap(0, 0, 0)
+                        .addComponent(TotalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addComponent(ButtonTambahProduk, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(45, Short.MAX_VALUE))
+                        .addComponent(jLabel8)
+                        .addGap(0, 0, 0)
+                        .addComponent(TanggalSisaPangan, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(35, 35, 35))
         );
 
         jPanel7.setBackground(new java.awt.Color(196, 80, 27));
 
         IdSisaPanganHapus.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
-        IdSisaPanganHapus.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        IdSisaPanganHapus.setBorder(null);
         IdSisaPanganHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 IdSisaPanganHapusActionPerformed(evt);
@@ -481,7 +488,8 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
         ButtonHapus.setFont(new java.awt.Font("Poppins", 1, 12)); // NOI18N
         ButtonHapus.setForeground(new java.awt.Color(255, 255, 255));
         ButtonHapus.setText("Hapus");
-        ButtonHapus.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        ButtonHapus.setBorder(null);
+        ButtonHapus.setBorderPainted(false);
         ButtonHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ButtonHapusActionPerformed(evt);
@@ -514,7 +522,7 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
                 .addComponent(IdSisaPanganHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(ButtonHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -534,10 +542,10 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(16, 16, 16)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -675,7 +683,8 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
     }//GEN-LAST:event_ButtonTambahHapusActionPerformed
 
     private void ButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonUpdateActionPerformed
-
+        new UpdateSisaPangan(this.penggunaSaatIni).setVisible(true);
+        dispose();
     }//GEN-LAST:event_ButtonUpdateActionPerformed
 
     private void ButtonKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonKembaliActionPerformed
@@ -723,12 +732,20 @@ public class TambahHapusSisaPangan extends javax.swing.JFrame {
                 }
             }
         } catch (Exception ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LihatTabel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        UserAccount penggunaTes = new UserAccount(2, "Mahesa Adi", "test@mail.com", "pass", "Staff_administrasi", "Balikpapan");
+        // [DIUBAH] Gunakan kelas konkret Staf dan tambahkan idHotel=0
+        Model.Staf penggunaTes = new Model.Staf(
+            2, 
+            "Mahesa Adi", 
+            "test@mail.com", 
+            "pass", 
+            "Balikpapan", // Wilayah
+            10 // idHotel (sesuaikan dengan data Staff Anda)
+        );
         
-        java.awt.EventQueue.invokeLater(() -> new TambahHapusSisaPangan(penggunaTes).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new LihatTabel(penggunaTes).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

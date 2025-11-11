@@ -3,8 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIKepalaAdministrasi;
-import Model.UserAccount;
-import Service.TransaksiService; // [BARU] Kita akan membuat service ini nanti
+import Model.Kepala; // [BARU] Import kelas konkret Kepala
+import Model.UserAccount; // Tetap perlu jika ada method yang memanggil UserAccount
+import Service.TransaksiService; 
 import UIKepalaAdministrasi.BerandaKepala;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,8 +20,9 @@ public class LihatTransaksi extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LihatTransaksi.class.getName());
     
     // ==== KONTEKS LOGIN & SERVICE ====
-    private final UserAccount currentUser;
-    private final TransaksiService transaksiSrv = new TransaksiService(); // [BARU]
+    // [DIUBAH] Menggunakan tipe konkret Kepala (Polimorfisme)
+    private final Kepala currentUser; 
+    private final TransaksiService transaksiSrv = new TransaksiService(); 
 
     // ==== TABEL MODEL ====
     private DefaultTableModel model;
@@ -28,7 +30,8 @@ public class LihatTransaksi extends javax.swing.JFrame {
     /**
      * Creates new form LihatTransaksi
      */
-    public LihatTransaksi(UserAccount user) {
+    
+    public LihatTransaksi(Kepala user) {
         if (user == null) {
             throw new IllegalArgumentException("User Account tidak boleh null.");
         }
@@ -354,15 +357,13 @@ public class LihatTransaksi extends javax.swing.JFrame {
                 logger.log(java.util.logging.Level.SEVERE, null, ex);
             }
 
-            // [DIUBAH] Buat user palsu untuk tujuan testing.
-            // Ganti ID dan wilayah sesuai dengan data di database Anda jika ingin melihat data asli.
-            UserAccount testUser = new UserAccount(
+            // [DIUBAH] Gunakan KEPALA, bukan lagi UserAccount (karena UserAccount sudah abstract)
+            Kepala testUser = new Kepala(
                 11, // ID User Kepala Administrasi, misal Zyrus Alfredo
                 "Zyrus Alfredo",
                 "zyrusalfredo123@gmail.com",
                 "zyrus123",
-                "Kepala_administrasi",
-                "Samarinda" // Wilayah yang dikelola
+                "Samarinda" // Wilayah yang dikelola (cukup 5 argumen)
             );
 
             // Panggil constructor yang benar dengan user palsu

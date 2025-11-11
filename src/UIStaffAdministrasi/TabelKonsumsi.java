@@ -3,8 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIStaffAdministrasi;
+import Model.Staf;
 import Model.UserAccount;
-import Service.LayananStaff;
+import Service.LayananStaf;
 import java.util.List;
 import java.util.logging.Level;
 import javax.swing.JOptionPane;
@@ -19,7 +20,7 @@ public class TabelKonsumsi extends javax.swing.JFrame {
     
     // ==== KONTEKS PENGGUNA & SERVICE ====
     private final UserAccount penggunaSaatIni;
-    private final LayananStaff layananStaf = new LayananStaff();
+    private final LayananStaf layananStaf = new LayananStaf();
 
     // ==== MODEL TABEL ====
     private DefaultTableModel modelTabel;
@@ -68,10 +69,10 @@ public class TabelKonsumsi extends javax.swing.JFrame {
             modelTabel.setRowCount(0); // Kosongkan tabel
 
             // Panggil service untuk mengambil data konsumsi berdasarkan ID staf
-            List<LayananStaff.BarisKonsumsiUntukTabel> daftarBaris = layananStaf.ambilDataKonsumsiUntukStaf(penggunaSaatIni.getIdUser());
+            List<LayananStaf.BarisKonsumsiUntukTabel> daftarBaris = layananStaf.ambilDataKonsumsiUntukStaf(penggunaSaatIni.getIdUser());
 
             // Isi tabel baris per baris
-            for (LayananStaff.BarisKonsumsiUntukTabel baris : daftarBaris) {
+            for (LayananStaf.BarisKonsumsiUntukTabel baris : daftarBaris) {
                 modelTabel.addRow(new Object[]{
                     baris.idKonsumsi(),
                     baris.idProduksi(),
@@ -256,7 +257,7 @@ public class TabelKonsumsi extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ButtonKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonKembaliActionPerformed
-        new LihatTabel(this.penggunaSaatIni).setVisible(true);
+        new LihatTabel((Staf) this.penggunaSaatIni).setVisible(true);
         dispose();
     }//GEN-LAST:event_ButtonKembaliActionPerformed
 
@@ -276,12 +277,20 @@ public class TabelKonsumsi extends javax.swing.JFrame {
                 }
             }
         } catch (Exception ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LihatTabel.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        UserAccount penggunaTes = new UserAccount(2, "Mahesa Adi", "test@mail.com", "pass", "Staff_administrasi", "Balikpapan");
+        // [DIUBAH] Gunakan kelas konkret Staf dan tambahkan idHotel=0
+        Model.Staf penggunaTes = new Model.Staf(
+            2, 
+            "Mahesa Adi", 
+            "test@mail.com", 
+            "pass", 
+            "Balikpapan", // Wilayah
+            10 // idHotel (sesuaikan dengan data Staff Anda)
+        );
         
-        java.awt.EventQueue.invokeLater(() -> new TabelKonsumsi(penggunaTes).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new LihatTabel(penggunaTes).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

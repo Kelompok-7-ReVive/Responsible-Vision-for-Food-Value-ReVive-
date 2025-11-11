@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIKepalaAdministrasi;
+import Model.Kepala;
 import Model.UserAccount;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -599,7 +600,7 @@ public class TambahHapusProduk extends javax.swing.JFrame {
 
     private void KembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KembaliActionPerformed
         // Buka kembali halaman PenjualanKepala sambil mengirim data user yang login
-        new PenjualanKepala(this.kepalaLogin).setVisible(true);
+        new PenjualanKepala((Kepala) this.kepalaLogin).setVisible(true);
 
         // Tutup halaman saat ini
         dispose();
@@ -668,14 +669,14 @@ public class TambahHapusProduk extends javax.swing.JFrame {
 
         // [DIUBAH] Buat user palsu untuk tujuan testing, agar constructor terpenuhi.
         // Ganti '1' dan 'Samarinda' sesuai kebutuhan testing Anda.
-        UserAccount testUser = new UserAccount(
-            1,                         // ID User palsu
-            "Kepala Test",             // Nama palsu
-            "test@email.com",          // Email palsu
-            "password",                // Password palsu
-            "Kepala Administrasi",     // Role
-            "Samarinda"                // Wilayah Dikelola
-        );
+           Model.Kepala testUser = new Model.Kepala(
+               3, // ID User
+               "Narendra Augusta",
+               "test@mail.com",
+               "pass",
+               "Kutai Kartanegara", // Wilayah
+               0 // ID HOTEL (Argumen ini sekarang tidak diperlukan karena kita hapus dari constructor Kepala)
+            );
 
         // Panggil constructor yang benar dengan user palsu
         java.awt.EventQueue.invokeLater(() -> new TambahHapusProduk(testUser).setVisible(true));

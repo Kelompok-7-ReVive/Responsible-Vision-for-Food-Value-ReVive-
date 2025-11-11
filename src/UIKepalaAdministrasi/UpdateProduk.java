@@ -543,8 +543,13 @@ public class UpdateProduk extends javax.swing.JFrame {
             }
 
             // Buat user palsu untuk tujuan testing
-            UserAccount testUser = new UserAccount(
-                3, "Narendra Augusta", "test@mail.com", "pass", "Kepala_administrasi", "Kutai Kartanegara"
+           Model.Kepala testUser = new Model.Kepala(
+               3, // ID User
+               "Narendra Augusta",
+               "test@mail.com",
+               "pass",
+               "Kutai Kartanegara", // Wilayah
+               0 // ID HOTEL (Argumen ini sekarang tidak diperlukan karena kita hapus dari constructor Kepala)
             );
 
             java.awt.EventQueue.invokeLater(() -> new UpdateProduk(testUser).setVisible(true));

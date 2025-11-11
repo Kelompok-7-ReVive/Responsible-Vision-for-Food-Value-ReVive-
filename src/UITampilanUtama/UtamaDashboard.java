@@ -7,6 +7,11 @@ import UITampilanUtama.BerandaUtama;
 import UITampilanUtama.TentangKami;
 import UITampilanUtama.UtamaDashboard;
 import UITampilanUtama.Login;
+import Model.FilterDashboard; 
+import Model.RingkasanKPI;
+import Model.TotalWilayah; 
+import Service.KepalaDashboardService;
+import java.util.Collections;
 
 /**
  *
@@ -14,14 +19,102 @@ import UITampilanUtama.Login;
  */
 public class UtamaDashboard extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UtamaDashboard.class.getName());
+    private static final java.util.logging.Logger logger 
+            = java.util.logging.Logger.getLogger(UtamaDashboard.class.getName());
+    
+    private final KepalaDashboardService dashService = new KepalaDashboardService();
+    private BarChartPanel top5Chart;
+    
+    private javax.swing.JLabel jLabel12; 
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
 
     /**
      * Creates new form UtamaDashboard
      */
     public UtamaDashboard() {
         initComponents();
+        top5Chart = new BarChartPanel();
+
+        jPanel7.removeAll();
+        jPanel7.setLayout(new java.awt.BorderLayout());
+        
+        javax.swing.JPanel chartHeader = new javax.swing.JPanel();
+        chartHeader.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        chartHeader.add(jLabel7);
+        chartHeader.add(jLabel8);
+        
+        top5Chart.setPreferredSize(new java.awt.Dimension(600, 260));
+        top5Chart.setBorder(javax.swing.BorderFactory.createCompoundBorder(
+            javax.swing.BorderFactory.createLineBorder(new java.awt.Color(200,200,200)),
+            javax.swing.BorderFactory.createEmptyBorder(8,8,8,8)
+        ));
+        
+        jPanel7.add(chartHeader, java.awt.BorderLayout.NORTH);
+        jPanel7.add(top5Chart, java.awt.BorderLayout.CENTER);
+
+        jLabel12 = jLabel9;
+        jLabel13 = jLabel10;
+        jLabel14 = jLabel11;
+        
+        refreshDashboard();
         setLocationRelativeTo(null);
+    }
+    
+    private void refreshDashboard() {
+        java.awt.Cursor old = getCursor();
+        setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
+        try {
+            // Filter statis (Lihat Semua) karena tidak ada filter UI
+            final int tahun = 2025; 
+            FilterDashboard filter = new FilterDashboard(tahun, 0, null);
+            
+            RingkasanKPI kpi = dashService.loadKpi(filter);
+
+            if (kpi == null) {
+                jLabel12.setText("Tidak ada data");
+                jLabel13.setText("Tidak ada data");
+                jLabel14.setText("0");
+            } else {
+                String fmtRata       = KepalaDashboardService.fmtKg(kpi.getRataRataKg()); 
+                String fmtTertinggi  = KepalaDashboardService.fmtKg(kpi.getWilayahTertinggiKg());
+                
+                jLabel12.setText(fmtRata);
+                jLabel13.setText(kpi.getWilayahTertinggi() + " (" + fmtTertinggi + ")");
+                jLabel14.setText(String.valueOf(kpi.getTotalAnalisisWilayah()));
+            }
+
+            refreshTop5(filter);
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Gagal memuat dashboard: " + ex.getMessage(),
+                    "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
+            jLabel12.setText("-");
+            jLabel13.setText("-");
+            jLabel14.setText("0");
+            if(top5Chart != null) top5Chart.setData(java.util.Collections.emptyList());
+        } finally {
+            setCursor(old);
+        }
+    }
+
+    private void refreshTop5(FilterDashboard filter){
+        try {
+            java.util.List<Model.TotalWilayah> top = dashService.loadTop5(filter);
+            
+            if (top != null && top.size() > 5) top = top.subList(0,5);
+
+            if (top == null || top.isEmpty()){
+                top5Chart.setData(java.util.Collections.emptyList());
+            } else {
+                top5Chart.setData(top);
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+            top5Chart.setData(java.util.Collections.emptyList());
+        }
     }
 
     /**
@@ -50,10 +143,13 @@ public class UtamaDashboard extends javax.swing.JFrame {
         jPanel8 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -217,21 +313,30 @@ public class UtamaDashboard extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Rata-Rata Food Waste");
 
+        jLabel9.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Hasil");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel4)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(0, 62, Short.MAX_VALUE))
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(jLabel4)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
         );
 
         jPanel5.setBackground(new java.awt.Color(204, 81, 0));
@@ -241,21 +346,31 @@ public class UtamaDashboard extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Wilayah Food Waste Tertinggi");
 
+        jLabel10.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel10.setText("Hasil");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(0, 12, Short.MAX_VALUE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(jLabel5)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanel6.setBackground(new java.awt.Color(0, 84, 0));
@@ -265,21 +380,31 @@ public class UtamaDashboard extends javax.swing.JFrame {
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("Total Wilayah yang Dipantau");
 
+        jLabel11.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setText("Hasil");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel6)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(0, 21, Short.MAX_VALUE))
+                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGap(31, 31, 31)
                 .addComponent(jLabel6)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
@@ -357,11 +482,6 @@ public class UtamaDashboard extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -372,7 +492,6 @@ public class UtamaDashboard extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new UtamaDashboard().setVisible(true));
@@ -384,6 +503,8 @@ public class UtamaDashboard extends javax.swing.JFrame {
     private javax.swing.JButton DMasuk;
     private javax.swing.JButton DTentangKami;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -391,6 +512,7 @@ public class UtamaDashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -401,4 +523,90 @@ public class UtamaDashboard extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
+    private static class BarChartPanel extends javax.swing.JPanel {
+        private java.util.List<Model.TotalWilayah> data = Collections.emptyList(); 
+
+        public void setData(java.util.List<Model.TotalWilayah> data){
+            this.data = (data == null) ? Collections.emptyList() : data;
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(java.awt.Graphics g) {
+            super.paintComponent(g);
+            java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+            g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int w = getWidth(), h = getHeight();
+            int padL = 50, padR = 20, padT = 20, padB = 60;
+            int plotW = Math.max(1, w - padL - padR);
+            int plotH = Math.max(1, h - padT - padB);
+
+            // Background plot
+            g2.setColor(new java.awt.Color(245,245,245));
+            g2.fillRoundRect(padL, padT, plotW, plotH, 12, 12);
+
+            if (data.isEmpty()){
+                g2.setColor(java.awt.Color.DARK_GRAY);
+                String msg = "Tidak ada data";
+                java.awt.FontMetrics fm = g2.getFontMetrics();
+                g2.drawString(msg, padL + (plotW - fm.stringWidth(msg))/2, padT + plotH/2);
+                g2.dispose();
+                return;
+            }
+
+            double max = data.stream().mapToDouble(Model.TotalWilayah::getTotalKg).max().orElse(0.0);
+            if (max <= 0) max = 1.0; 
+
+            g2.setColor(new java.awt.Color(220,220,220));
+            for (int i=0;i<=4;i++){
+                int y = padT + (int) Math.round(plotH * i / 4.0);
+                g2.drawLine(padL, y, padL + plotW, y);
+            }
+
+            // axis Y label sederhana (max)
+            g2.setColor(java.awt.Color.GRAY);
+            String yMax = String.format("%,.0f kg", max);
+            g2.drawString(yMax, padL + 6, padT + 14);
+
+            int n = data.size();
+            int gap = 12; 
+            int barW = Math.max(10, (plotW - gap*(n+1)) / Math.max(1,n));
+
+            // bars
+            int x = padL + gap;
+            java.awt.FontMetrics fm = g2.getFontMetrics();
+            for (Model.TotalWilayah row : data){
+                double val = row.getTotalKg();
+                int barH = (int)Math.round( (val / max) * plotH );
+                int y = padT + plotH - barH;
+
+                // batang
+                g2.setColor(new java.awt.Color(0, 120, 60)); 
+                g2.fillRoundRect(x, y, barW, barH, 8, 8);
+
+                // nilai di atas bar
+                String labelVal = String.format("%,.0f", val);
+                g2.setColor(java.awt.Color.BLACK);
+                int txtW = fm.stringWidth(labelVal);
+                g2.drawString(labelVal, x + (barW - txtW)/2, y - 4);
+
+                // label wilayah (diputar 45° supaya muat)
+                String wilayah = row.getWilayah();
+                g2.setColor(java.awt.Color.DARK_GRAY);
+                java.awt.geom.AffineTransform at = g2.getTransform();
+                g2.rotate(-Math.toRadians(45), x + barW/2.0, padT + plotH + 10);
+                g2.drawString(wilayah, x + barW/2 - fm.stringWidth(wilayah)/2, padT + plotH + 18);
+                g2.setTransform(at);
+
+                x += barW + gap;
+            }
+
+            g2.dispose();
+        }
+
+        @Override public java.awt.Dimension getPreferredSize() {
+            return new java.awt.Dimension(600, 260);
+        }
+    }
 }

@@ -3,6 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package UIPelanggan;
+import Model.Pelanggan;
+import UITampilanUtama.BerandaUtama;
+import java.util.logging.Level;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -12,12 +16,24 @@ public class PelangganBeranda extends javax.swing.JFrame {
 
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PelangganBeranda.class.getName());
+    private Pelanggan currentUser;
     
     /**
      * Creates new form Pelanggan_toko_coba
      */
-    public PelangganBeranda() {
+    public PelangganBeranda(Pelanggan user) {
+        if (user == null) {
+            JOptionPane.showMessageDialog(null, "Error: Akun Pelanggan tidak valid.", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
+        this.currentUser = user;
         initComponents();
+        afterInit();
+    }
+    
+    private void afterInit() {
+        setLocationRelativeTo(null);
+        setTitle("Beranda Pelanggan - " + currentUser.getNama());
     }
 
     /**
@@ -31,12 +47,13 @@ public class PelangganBeranda extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        User = new javax.swing.JLabel();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        BerandaPelanggan = new javax.swing.JButton();
+        BelanjaPelanggan = new javax.swing.JButton();
+        HistoryPelanggan = new javax.swing.JButton();
         Keluar = new javax.swing.JButton();
-        Pelanggan_Belanja = new javax.swing.JButton();
-        Pelanggan_Beranda = new javax.swing.JButton();
-        Watermark = new javax.swing.JLabel();
-        Keluar1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -73,68 +90,97 @@ public class PelangganBeranda extends javax.swing.JFrame {
         jPanel2.setPreferredSize(new java.awt.Dimension(290, 750));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        User.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        User.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        User.setText("Pelanggan");
-        jPanel2.add(User, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 140, 30));
+        jPanel9.setBackground(new java.awt.Color(19, 66, 34));
 
-        Keluar.setBackground(new java.awt.Color(78, 113, 68));
-        Keluar.setFont(new java.awt.Font("Myanmar Text", 1, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Montserrat", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("REVIVE");
+
+        jLabel2.setFont(new java.awt.Font("Poppins", 0, 12)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Pelanggan");
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap(32, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
+        );
+
+        jPanel2.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 180, 110));
+
+        BerandaPelanggan.setBackground(new java.awt.Color(19, 52, 30));
+        BerandaPelanggan.setFont(new java.awt.Font("Poppins", 1, 14)); // NOI18N
+        BerandaPelanggan.setForeground(new java.awt.Color(255, 255, 255));
+        BerandaPelanggan.setText("BERANDA");
+        BerandaPelanggan.setBorder(null);
+        BerandaPelanggan.setBorderPainted(false);
+        BerandaPelanggan.setContentAreaFilled(false);
+        BerandaPelanggan.setMargin(new java.awt.Insets(7, 14, 3, 14));
+        BerandaPelanggan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BerandaPelangganActionPerformed(evt);
+            }
+        });
+        jPanel2.add(BerandaPelanggan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 140, 40));
+
+        BelanjaPelanggan.setBackground(new java.awt.Color(19, 52, 30));
+        BelanjaPelanggan.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        BelanjaPelanggan.setForeground(new java.awt.Color(255, 255, 255));
+        BelanjaPelanggan.setText("BELANJA");
+        BelanjaPelanggan.setBorder(null);
+        BelanjaPelanggan.setBorderPainted(false);
+        BelanjaPelanggan.setContentAreaFilled(false);
+        BelanjaPelanggan.setMargin(new java.awt.Insets(7, 14, 3, 14));
+        BelanjaPelanggan.setSelected(true);
+        BelanjaPelanggan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BelanjaPelangganActionPerformed(evt);
+            }
+        });
+        jPanel2.add(BelanjaPelanggan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 140, 40));
+
+        HistoryPelanggan.setBackground(new java.awt.Color(19, 52, 30));
+        HistoryPelanggan.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        HistoryPelanggan.setForeground(new java.awt.Color(255, 255, 255));
+        HistoryPelanggan.setText("HISTORY BELANJA");
+        HistoryPelanggan.setBorder(null);
+        HistoryPelanggan.setBorderPainted(false);
+        HistoryPelanggan.setContentAreaFilled(false);
+        HistoryPelanggan.setMargin(new java.awt.Insets(7, 14, 3, 14));
+        HistoryPelanggan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                HistoryPelangganActionPerformed(evt);
+            }
+        });
+        jPanel2.add(HistoryPelanggan, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, 140, 40));
+
+        Keluar.setBackground(new java.awt.Color(19, 52, 30));
+        Keluar.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         Keluar.setForeground(new java.awt.Color(255, 255, 255));
-        Keluar.setText("HISTORY BELANJA");
-        Keluar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        Keluar.setText("KELUAR");
+        Keluar.setBorder(null);
+        Keluar.setBorderPainted(false);
+        Keluar.setContentAreaFilled(false);
         Keluar.setMargin(new java.awt.Insets(7, 14, 3, 14));
         Keluar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 KeluarActionPerformed(evt);
             }
         });
-        jPanel2.add(Keluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 280, 140, 40));
-
-        Pelanggan_Belanja.setBackground(new java.awt.Color(78, 113, 68));
-        Pelanggan_Belanja.setFont(new java.awt.Font("Myanmar Text", 1, 14)); // NOI18N
-        Pelanggan_Belanja.setForeground(new java.awt.Color(255, 255, 255));
-        Pelanggan_Belanja.setText("BELANJA");
-        Pelanggan_Belanja.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Pelanggan_Belanja.setMargin(new java.awt.Insets(7, 14, 3, 14));
-        Pelanggan_Belanja.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Pelanggan_BelanjaActionPerformed(evt);
-            }
-        });
-        jPanel2.add(Pelanggan_Belanja, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 140, 40));
-
-        Pelanggan_Beranda.setBackground(new java.awt.Color(78, 113, 68));
-        Pelanggan_Beranda.setFont(new java.awt.Font("Myanmar Text", 1, 14)); // NOI18N
-        Pelanggan_Beranda.setForeground(new java.awt.Color(255, 255, 255));
-        Pelanggan_Beranda.setText("BERANDA");
-        Pelanggan_Beranda.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        Pelanggan_Beranda.setMargin(new java.awt.Insets(7, 14, 3, 14));
-        Pelanggan_Beranda.setSelected(true);
-        Pelanggan_Beranda.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Pelanggan_BerandaActionPerformed(evt);
-            }
-        });
-        jPanel2.add(Pelanggan_Beranda, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 140, 40));
-
-        Watermark.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        Watermark.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Watermark.setText("REVIVE");
-        jPanel2.add(Watermark, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, 100, 30));
-
-        Keluar1.setBackground(new java.awt.Color(78, 113, 68));
-        Keluar1.setFont(new java.awt.Font("Myanmar Text", 1, 14)); // NOI18N
-        Keluar1.setForeground(new java.awt.Color(255, 255, 255));
-        Keluar1.setText("KELUAR");
-        Keluar1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        Keluar1.setMargin(new java.awt.Insets(7, 14, 3, 14));
-        Keluar1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Keluar1ActionPerformed(evt);
-            }
-        });
-        jPanel2.add(Keluar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 140, 40));
+        jPanel2.add(Keluar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 350, 140, 40));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 180, 510));
 
@@ -241,20 +287,20 @@ public class PelangganBeranda extends javax.swing.JFrame {
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel20.setText("jLabel20");
+        jLabel20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/BCKG 7.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
+            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jLabel21.setText("jLabel20");
+        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Image/BCKG 8.jpg"))); // NOI18N
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -303,31 +349,28 @@ public class PelangganBeranda extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void BerandaPelangganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BerandaPelangganActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_BerandaPelangganActionPerformed
+
+    private void BelanjaPelangganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BelanjaPelangganActionPerformed
+        new PelangganBelanja(this.currentUser).setVisible(true);
+        dispose();
+    }//GEN-LAST:event_BelanjaPelangganActionPerformed
+
+    private void HistoryPelangganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HistoryPelangganActionPerformed
+        new PelangganHistoryPembelian(this.currentUser).setVisible(true);
+        dispose();
+    }//GEN-LAST:event_HistoryPelangganActionPerformed
+
     private void KeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KeluarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_KeluarActionPerformed
-
-    private void Pelanggan_BelanjaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Pelanggan_BelanjaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_Pelanggan_BelanjaActionPerformed
-
-    private void Pelanggan_BerandaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Pelanggan_BerandaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_Pelanggan_BerandaActionPerformed
-
-    private void Keluar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Keluar1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_Keluar1ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -335,22 +378,24 @@ public class PelangganBeranda extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, null, ex);
         }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new PelangganBeranda().setVisible(true));
+        // Contoh Pengguna Pelanggan untuk testing
+        Pelanggan testUser = new Pelanggan(
+            1, "Eko Wijaya", "ekowijayacool@gmail.com", "ekopintar11", "PT Nusantara Globalindo"
+        );
+        
+        java.awt.EventQueue.invokeLater(() -> new PelangganBeranda(testUser).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BelanjaPelanggan;
+    private javax.swing.JButton BerandaPelanggan;
+    private javax.swing.JButton HistoryPelanggan;
     private javax.swing.JButton Keluar;
-    private javax.swing.JButton Keluar1;
-    private javax.swing.JButton Pelanggan_Belanja;
-    private javax.swing.JButton Pelanggan_Beranda;
-    private javax.swing.JLabel User;
-    private javax.swing.JLabel Watermark;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -361,6 +406,7 @@ public class PelangganBeranda extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
@@ -378,5 +424,6 @@ public class PelangganBeranda extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     // End of variables declaration//GEN-END:variables
 }

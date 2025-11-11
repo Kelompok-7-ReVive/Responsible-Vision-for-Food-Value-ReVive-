@@ -3,40 +3,45 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package Model;
-
+import javax.swing.JFrame;
 /**
  *
  * @author Zyrus
  */
-public class UserAccount {
+public abstract class UserAccount {
+
     private int idUser;
     private int idHotel;
     private String nama;
     private String email;
     private String password;
     private String role;
-    private String wilayahDikelola; // [BARU] Variabel untuk menyimpan wilayah
+    private String wilayahDikelola;
 
     /**
-     * Constructor kosong, seringkali dibutuhkan oleh library atau framework.
+     * Constructor dasar untuk diwarisi oleh kelas turunan.
      */
-    public UserAccount() {
-    }
-
-    /**
-     * [BARU] Constructor lengkap untuk membuat objek UserAccount dengan semua data.
-     * Ini yang akan memperbaiki error di metode main Anda.
-     */
-    public UserAccount(int idUser, String nama, String email, String password, String role, String wilayahDikelola) {
+    public UserAccount(int idUser, String nama, String email, String password, String role, String wilayahDikelola, int idHotel) {
         this.idUser = idUser;
         this.nama = nama;
         this.email = email;
         this.password = password;
         this.role = role;
         this.wilayahDikelola = wilayahDikelola;
+        this.idHotel = idHotel;
     }
     
-    // --- Getters and Setters ---
+    /**
+     * [BARU] Ini adalah pilar POLIMORFISME dan ABSTRAKSI.
+     * Kita memaksa setiap kelas turunan (Kepala, Staf, Pelanggan)
+     * untuk mengimplementasikan (override) metode ini dengan cara mereka sendiri.
+     * * @param jendeleIni Jendela (JFrame) yang memanggil, biasanya untuk di-dispose().
+     */
+    
+    public abstract void bukaBeranda(JFrame jendeleIni);
+
+    
+    // --- Getters and Setters (Encapsulation) ---
     
     public int getIdUser() { return idUser; }
     public void setIdUser(int idUser) { this.idUser = idUser; }
@@ -50,8 +55,6 @@ public class UserAccount {
     public void setPassword(String password) { this.password = password; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-    
-    // [BARU] Getter dan Setter untuk wilayahDikelola
     public String getWilayahDikelola() { return wilayahDikelola; }
     public void setWilayahDikelola(String wilayahDikelola) { this.wilayahDikelola = wilayahDikelola; }
 }

@@ -38,27 +38,6 @@ public class Register extends javax.swing.JFrame {
                 DaftarPassword.setEchoChar(defaultEchoChar);
             }
         });
-        
-        DaftarPassword.addActionListener((ActionEvent e) -> performRegister());
-        DaftarEmail.addActionListener((ActionEvent e) -> DaftarPassword.requestFocusInWindow());
-
-        // Enter di password -> trigger register
-        DaftarPassword.addActionListener((ActionEvent e) -> performRegister());
-
-        // Enter di email -> pindah fokus ke password
-        DaftarEmail.addActionListener((ActionEvent e) -> DaftarPassword.requestFocusInWindow());
-
-        // Tombol "Masuk" di form daftar -> buka Login (jika ada)
-        Masuk_Daftar.addActionListener((ActionEvent e) -> {
-            // Jika sudah membuat Login class, uncomment baris berikut:
-            // new Login().setVisible(true);
-            // this.dispose();
-            System.out.println("Masuk_Daftar clicked (buka Login form di sini).");
-        });
-
-        // Tombol Daftar juga bisa dipanggil langsung bila designer membuat handler;
-        // namun kita pastikan tombol memanggil performRegister juga:
-        DaftarRegister.addActionListener((ActionEvent e) -> performRegister());
 }
 
     /**
@@ -271,7 +250,7 @@ public class Register extends javax.swing.JFrame {
     }//GEN-LAST:event_LihatPwDaftarActionPerformed
 
     private void BatalkanRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BatalkanRegisterActionPerformed
-        onCancel();
+        goLogin();
     }//GEN-LAST:event_BatalkanRegisterActionPerformed
 
     /**
@@ -332,48 +311,38 @@ public class Register extends javax.swing.JFrame {
         String email = DaftarEmail.getText().trim();
         char[] passChars = DaftarPassword.getPassword();
         String password = new String(passChars);
-        
+
         try{
-            if (!rangeOk(nama) || !rangeOk(mitra) || !rangeOk(email) || !rangeOk(password)) {
-                throw new IllegalArgumentException("Semua input harus 3–50 karakter.");
-            }
-            if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[A-Za-z]{2,}$")) {
-                throw new IllegalArgumentException("Format email tidak valid.");
-            }
-            registerService.registerPelanggan(nama, mitra, email, password);
-            
-            JOptionPane.showMessageDialog(this,
-                    "Akun Berhasil Dibuat, Silahkan Login",
-                    "Sukses", JOptionPane.INFORMATION_MESSAGE);
-            goLogin();
+            // 1. Pendaftaran berhasil
+            registerService.registerPelanggan(nama, mitra, email, password); 
+
+            // 2. Pop-up Sukses (Modal). Ini akan memblokir eksekusi sampai OK ditekan.
+            JOptionPane.showMessageDialog(this, "Akun Berhasil Dibuat, Silahkan Login", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+
+            // HAPUS goLogin() dari sini.
+
         }catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(),
-                    "Data Tidak Valid!", JOptionPane.WARNING_MESSAGE);
+            // ... (tetap sama)
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Data Tidak Valid!", JOptionPane.WARNING_MESSAGE);
+            return; // Penting: Hentikan eksekusi jika gagal
         }catch (Exception ex) {
+            // ... (tetap sama)
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     "Gagal Membuat Akun: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Penting: Hentikan eksekusi jika gagal
         }finally{
             Arrays.fill(passChars, '\0');
         }
-    }
-    
-    private boolean rangeOk(String s){
-        return s != null && s.length() >= 3 && s.length() <= 50;
+
+        // 3. Panggil goLogin() HANYA SEKALI, di luar try-catch jika sukses.
+        // Jika performRegister() sukses (tidak melempar exception), maka goLogin() akan dieksekusi setelah pop-up ditutup.
+        goLogin();
     }
     
     private void goLogin(){
         new Login().setVisible(true);
         dispose();
-    }
-    
-    private void onCancel(){
-        new Login().setVisible(true);
-        dispose();
-    }
-
-    private void onRegister() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
